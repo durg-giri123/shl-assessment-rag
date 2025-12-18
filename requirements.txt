@@ -4,3 +4,9 @@ pandas
 numpy
 tqdm
 lxml
+fastapi
+uvicorn
+sentence-transformers
+torch
+faiss-cpu
+streamlit
