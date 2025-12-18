@@ -24,21 +24,33 @@ if st.button("Recommend Assessments", key="recommend_btn"):
     if not query.strip():
         st.warning("Please enter a valid query.")
     else:
-        with st.spinner("Fetching recommendations..."):
-            response = requests.post(
-                API_URL,
-                json={"query": query, "top_k": top_k},
-                timeout=30
-            )
+        with st.spinner("Waking up recommendation engine (first request may take ~1 minute)..."):
+            try:
+                response = requests.post(
+                    API_URL,
+                    json={"query": query, "top_k": top_k},
+                    timeout=120  # IMPORTANT: increased timeout
+                )
 
-            if response.status_code == 200:
-                data = response.json()
+                if response.status_code == 200:
+                    data = response.json()
 
-                st.subheader("Recommended Assessments")
-                for url in data["recommendations"]:
-                    st.markdown(f"- {url}")
+                    st.subheader("Recommended Assessments")
+                    for url in data.get("recommendations", []):
+                        st.markdown(f"- {url}")
 
-                st.subheader("Explanation")
-                st.write(data["explanation"])
-            else:
-                st.error("Failed to fetch recommendations from API.")
+                    st.subheader("Explanation")
+                    st.write(data.get("explanation", ""))
+
+                else:
+                    st.error("API responded but returned an error.")
+
+            except requests.exceptions.ReadTimeout:
+                st.error(
+                    "⏳ The backend is waking up (Render free tier sleep).\n\n"
+                    "Please wait 30–60 seconds and click **Recommend** again."
+                )
+
+            except Exception as e:
+                st.error(f"Unexpected error: {e}")
+
