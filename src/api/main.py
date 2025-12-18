@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# import your pipeline function
-# adjust import path if needed
-from src.engine.pipeline import run_pipeline  
-
-app = FastAPI(title="SHL GenAI Assessment Recommendation API")
+app = FastAPI(title="SHL GenAI Recommendation API")
 
 
 class QueryRequest(BaseModel):
@@ -15,18 +11,12 @@ class QueryRequest(BaseModel):
 
 @app.post("/recommend")
 def recommend(req: QueryRequest):
-    urls, explanation = run_pipeline(req.query, req.top_k)
+    # TEMPORARY DUMMY RESPONSE (for deployment sanity)
     return {
         "query": req.query,
-        "recommendations": urls,
-        "explanation": explanation
+        "recommendations": [
+            "https://www.shl.com/products/product-catalog/view/cashier-solution/",
+            "https://www.shl.com/products/product-catalog/view/bilingual-spanish-reservation-agent-solution/"
+        ],
+        "explanation": "These assessments evaluate customer service, communication, and problem-solving skills."
     }
-
-
-
-
-
-
-
-
-
